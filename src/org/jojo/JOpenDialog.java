@@ -11,14 +11,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 import org.jojo.helper.ProjectHelper;
 import org.jojo.helper.ResourceBundleHelper;
 import org.jojo.search.SearchService;
+import org.netbeans.api.editor.EditorRegistry;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ui.OpenProjects;
 import org.openide.filesystems.FileObject;
@@ -27,6 +30,8 @@ import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
 import org.openide.util.ContextAwareAction;
 import org.openide.util.Exceptions;
+import org.openide.windows.IOProvider;
+import org.openide.windows.InputOutput;
 
 public class JOpenDialog extends JDialog {
 
@@ -44,6 +49,18 @@ public class JOpenDialog extends JDialog {
         moveToCenterOfScreen();
         
         selectDefaultProject();
+        JTextComponent editor = EditorRegistry.lastFocusedComponent();
+        
+//        Console console = System.console();
+//        System.out.println("Caret pos: " + editor.getCaretPosition());
+//        System.out.println("Selection start: " + editor.getSelectionStart());
+//        System.out.println("Selection end: " + editor.getSelectionEnd());
+//        System.out.println(editor.getSelectedText());
+        String selectedText = editor.getSelectedText();
+        if (selectedText.length() > 0) {
+            jQueryField.setText(selectedText);
+            updateResultList();
+        }
     }
     
     
@@ -51,8 +68,12 @@ public class JOpenDialog extends JDialog {
     private void selectDefaultProject() {
         try {
             Project openProjects[] = OpenProjects.getDefault().openProjects().get();
+            
+//            Console console = System.console();
+//            System.out.println(openProjects.length);
+            
             if (openProjects.length > 0) {
-                Project project = openProjects[1];
+                Project project = openProjects[0];
                 OpenProjects.getDefault().setMainProject(project);
                 SearchData.getInstance().setSourceFolders(ProjectHelper.getSourceFolders(project));
             }

@@ -30,8 +30,6 @@ import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
 import org.openide.util.ContextAwareAction;
 import org.openide.util.Exceptions;
-import org.openide.windows.IOProvider;
-import org.openide.windows.InputOutput;
 
 public class JOpenDialog extends JDialog {
 

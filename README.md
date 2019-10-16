@@ -14,5 +14,5 @@ example https://raw.githubusercontent.com/zjsxwc/netbeans-jopen-plugin-support-s
 
 - jump to service class file by service name
 - jump to the action method by url string or routing name
-- let netbeans know the class type of service from `$this->get("xxx_service_name")`
+- let netbeans know the class type of service from `$this->get("xxx_service_name")`. could simply append the phpdoc `@var SomeType $varname` to line
 - generate service config from class file

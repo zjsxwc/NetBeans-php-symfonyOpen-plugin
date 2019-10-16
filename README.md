@@ -11,4 +11,5 @@
       <video controls>
         <source src="https://raw.githubusercontent.com/zjsxwc/netbeans-jopen-plugin-support-symfony-twig/master/example-open-twig-file.mp4" type="video/mp4">
       </video>
+      <iframe height=498 width=510 src="https://raw.githubusercontent.com/zjsxwc/netbeans-jopen-plugin-support-symfony-twig/master/example-open-twig-file.mp4">
 </p>

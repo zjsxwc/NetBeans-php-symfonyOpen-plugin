@@ -13,6 +13,6 @@ example https://raw.githubusercontent.com/zjsxwc/netbeans-jopen-plugin-support-s
 #### todo
 
 - jump to service class file by service name
-- jump to the action position by url
+- jump to the action method by url string or routing name
 - let netbeans know the class type of service from `$this->get("xxx_service_name")`
 - generate service config from class file

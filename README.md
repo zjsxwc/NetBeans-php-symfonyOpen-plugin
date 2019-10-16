@@ -5,7 +5,7 @@
 #### how to open twig file
 
 1. Select the symfony style Twig file path like "MyBundle:Article:new_article.html.twig"
-2. Triger jopen buttom from [Naviagte|jopen] or Your customed short key to jump to open the twig file 
+2. click jopen buttom from [Naviagte|jopen] or Your customed short key to jump to open the twig file 
 
 example https://raw.githubusercontent.com/zjsxwc/netbeans-jopen-plugin-support-symfony-twig/master/example-open-twig-file.mp4
 

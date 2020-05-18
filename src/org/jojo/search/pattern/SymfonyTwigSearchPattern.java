@@ -32,6 +32,8 @@ public class SymfonyTwigSearchPattern extends SearchPattern {
         if (fileEntry == null || !isValidQuery(query)) {
             return false;
         }
+        boolean isMatched = (fileEntry.getRelativePath().toLowerCase().startsWith(query.toLowerCase()));;
+        
         // "MyBundle:Article:new_article.html.twig" => src/MyBundle/Resources/views/Article/new_article.html.twig
         String realPath = query;
         String[] exploded = query.split(":");
@@ -41,13 +43,20 @@ public class SymfonyTwigSearchPattern extends SearchPattern {
             } else {
                 realPath = "/src/" + exploded[0] + "/Resources/views/" + exploded[2];
             }
+            isMatched = (fileEntry.getRelativePath().toLowerCase().startsWith(realPath.toLowerCase()));
         }
         
-//        Console console = System.console();
-//        System.out.println(query);
-//        System.out.println(realPath);
+        // "UserBundle:BodySizeData"
+        if (exploded.length == 2) {
+            realPath = "/src/" + exploded[0] + "/Entity/" + exploded[1] + ".php";
+            isMatched = (fileEntry.getRelativePath().toLowerCase().startsWith(realPath.toLowerCase()));
+            if (!isMatched) {
+                realPath = "/src/" + exploded[0] + "/Repository/" + exploded[1] + "Repository.php";
+                isMatched = (fileEntry.getRelativePath().toLowerCase().startsWith(realPath.toLowerCase()));
+            }
+        }
         
-        return (fileEntry.getRelativePath().toLowerCase().startsWith(realPath.toLowerCase()));
+        return isMatched;
     }
 
     @Override

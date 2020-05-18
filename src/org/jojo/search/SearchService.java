@@ -47,13 +47,13 @@ public class SearchService {
         int actualLimit = limit;
         for (Iterator<SearchPattern> it = searchPatternList.iterator(); it.hasNext();) {
             SearchPattern searchPattern = it.next();
+            if (!searchPattern.queryStringApply(query)) {
+                continue;
+            }
             actualLimit = limit - result.size();
             if (actualLimit > 0 && searchPattern.isValidQuery(query)) {
                 ArrayList<FileEntry> found = searchPattern.search(fileList, query, actualLimit);     
                 result = FileEntry.concatWithoutDuplications(result, found);
-                if ((found.size() > 0) && (searchPattern instanceof SymfonyTwigSearchPattern)) {
-                    break;
-                }
             }
         }
         return result;

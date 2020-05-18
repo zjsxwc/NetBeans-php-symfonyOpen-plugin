@@ -26,4 +26,9 @@ public abstract class SearchPattern {
         }
         return result;
     }
+    
+    public boolean queryStringApply(String query) {
+        return true;
+    }
+    
 }

@@ -49,12 +49,94 @@ public class JOpenDialog extends JDialog {
         selectDefaultProject();
         JTextComponent editor = EditorRegistry.lastFocusedComponent();
         
-//        Console console = System.console();
-//        System.out.println("Caret pos: " + editor.getCaretPosition());
-//        System.out.println("Selection start: " + editor.getSelectionStart());
-//        System.out.println("Selection end: " + editor.getSelectionEnd());
-//        System.out.println(editor.getSelectedText());
-        String selectedText = editor.getSelectedText();
+        Console console = System.console();
+        System.out.println("Caret pos: " + editor.getCaretPosition());
+        System.out.println("Selection start: " + editor.getSelectionStart());
+        System.out.println("Selection end: " + editor.getSelectionEnd());
+       
+
+        String selectedText = "";
+        try {
+            selectedText = editor.getSelectedText();
+        } catch (Exception e) {
+            selectedText = "";
+        }
+        if (selectedText == null) {
+            selectedText = "";
+        }
+        
+        if (selectedText.length() == 0) {
+            String mayQueryString = "";
+            int p = editor.getCaretPosition();
+            String t = "";
+
+            int l = 1;
+            int lpos = -1;
+            while (true) {
+                try {
+                    t = editor.getText(p - l, 1);
+                } catch (Exception e) {
+                    lpos = -1;
+                    break;
+                }
+                if (t.indexOf("'") >= 0) {
+                    lpos = p - l + 1;
+                    break;
+                }
+                if (t.indexOf("\"") >= 0) {
+                    lpos = p - l + 1;
+                    break;
+                }
+                l++;
+                if (l > 250) {
+                    break;
+                }
+            }
+            
+            l = 1;
+            int rpos = -1;
+            while (true) {
+                try {
+                    t = editor.getText(p + l, 1);
+                } catch (Exception e) {
+                    rpos = -1;
+                    break;
+                }
+                if (t.indexOf("'") >= 0) {
+                    rpos = p + l;
+                    break;
+                }
+                if (t.indexOf("\"") >= 0) {
+                    rpos = p + l;
+                    break;
+                }
+                l++;
+                if (l > 250) {
+                    break;
+                }
+            }
+            
+            if ((lpos > 0) && (rpos >= 0) && (lpos < rpos)) {
+                try {
+                    mayQueryString = editor.getText(lpos, rpos - lpos);
+                    
+                    
+                    System.out.println("lpos: " + lpos);
+                    System.out.println("rpos: " + rpos);
+                    System.out.println("mayQueryString: " + mayQueryString);
+                    
+                    
+                    jQueryField.setText(mayQueryString);
+                    updateResultList();
+                } catch (Exception e) {
+                   //log
+                }
+                
+            }
+         
+        }
+        
+               
         if (selectedText.length() > 0) {
             jQueryField.setText(selectedText);
             updateResultList();

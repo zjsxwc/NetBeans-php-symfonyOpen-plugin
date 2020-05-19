@@ -1,4 +1,4 @@
-# netbeans-symfonyOpen-plugin-support-symfony-twig
+# netbeans-symfonyOpen-plugin
 
 > This plugin is modified from https://github.com/johanness/jopen
 

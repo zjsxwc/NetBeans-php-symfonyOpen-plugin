@@ -1,6 +1,7 @@
 ABOUT
 
-jopen is a small Netbeans plugin to search and open files fast.
+symfonyOpen is a small Netbeans plugin to search and open symfony files fast.
+symfonyOpen is based on jopen project.
 It presents the search results as you type and has a simple directory search.
 
 
@@ -14,12 +15,12 @@ USAGE
 
 I recommend to set up a shortcut (e.g. ALT+O).
 
-jopen will search only in your "main project". You can switch projects using
+symfonyOpen will search only in your "main project". You can switch projects using
 the built in "Select Project" menu.
 
 Just enter the filename you are looking for to start a search.
 
-jopen also uses a regex kind of search:
+symfonyOpen also uses a regex kind of search:
 "smecontller.b" will also find "some_controller.rb"
 
 Match file extensions with '$':

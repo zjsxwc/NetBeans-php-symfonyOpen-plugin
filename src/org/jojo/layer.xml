@@ -5,7 +5,7 @@
         <folder name="File">
             <file name="org-jojo-JOpen.instance">
                 <attr name="delegate" newvalue="org.jojo.JOpen"/>
-                <attr name="displayName" bundlevalue="org.jojo.Bundle#CTL_jopen"/>
+                <attr name="displayName" bundlevalue="org.jojo.Bundle#CTL_symfonyOpen"/>
                 <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
             </file>

@@ -9,16 +9,22 @@ public class SearchService {
     private static SearchService instance = null;
     private ArrayList<SearchPattern> searchPatternList = new ArrayList<SearchPattern>();
 
-    private SearchService() {
-        searchPatternList.add(new DirectorySearchPattern());
-        searchPatternList.add(new SimpleSearchPattern());
-        searchPatternList.add(new SymfonyTwigSearchPattern());
-        searchPatternList.add(new RegexSearchPattern());
+    private SearchService(boolean onlySymfony) {
+        if (!onlySymfony) {
+            searchPatternList.add(new DirectorySearchPattern());
+            searchPatternList.add(new SimpleSearchPattern());
+            searchPatternList.add(new SymfonyTwigSearchPattern());
+            searchPatternList.add(new RegexSearchPattern());
+        } else {
+            searchPatternList.add(new DirectorySearchPattern());
+            searchPatternList.add(new SymfonyTwigSearchPattern());
+        }
+
     }
 
-    public static SearchService getInstance() {
+    public static SearchService getInstance(boolean onlySymfony) {
         if (instance == null) {
-            instance = new SearchService();
+            instance = new SearchService(onlySymfony);
         }
         return instance;
     }
@@ -55,7 +61,7 @@ public class SearchService {
             }
             actualLimit = limit - result.size();
             if (actualLimit > 0 && searchPattern.isValidQuery(query)) {
-                ArrayList<FileEntry> found = searchPattern.search(fileList, query, actualLimit);     
+                ArrayList<FileEntry> found = searchPattern.search(fileList, query, actualLimit);
                 result = FileEntry.concatWithoutDuplications(result, found);
             }
         }

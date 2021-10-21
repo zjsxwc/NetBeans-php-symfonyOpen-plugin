@@ -13,7 +13,7 @@ public class SearchServiceTest {
 
     @Test
     public void testByDefaultUsesThreeSearchPatterns() {
-        SearchService searchService = SearchService.getInstance();
+        SearchService searchService = SearchService.getInstance(false);
         ArrayList<SearchPattern> actual = searchService.getSearchPatternList();
         assertEquals(3, actual.size());
         assertTrue(actual.get(0).getClass().equals(DirectorySearchPattern.class));
@@ -23,7 +23,7 @@ public class SearchServiceTest {
 
     @Test
     public void testSearchPatternsCanBeClearedAndAdded() {
-        SearchService searchService = SearchService.getInstance();
+        SearchService searchService = SearchService.getInstance(false);
         assertEquals(3, searchService.getSearchPatternList().size());
 
         searchService.clearSearchPatternList();
@@ -41,7 +41,7 @@ public class SearchServiceTest {
         ArrayList<FileEntry> fileList = new ArrayList<FileEntry>();
         FileEntry testFileEntry = new FileEntry(new File("/somefile"));
         fileList.add(testFileEntry);
-        SearchService searchService = SearchService.getInstance();
+        SearchService searchService = SearchService.getInstance(false);
 
         assertTrue(searchService.search(null, null).isEmpty());
         assertTrue(searchService.search(fileList, null).isEmpty());
@@ -58,7 +58,7 @@ public class SearchServiceTest {
         for (int i = 0; i < 100; i++) {
             fileList.add(new FileEntry(new File("/somefile" + i)));
         }
-        SearchService searchService = SearchService.getInstance();
+        SearchService searchService = SearchService.getInstance(false);
 
         assertTrue(searchService.search(null, null).isEmpty());
         assertTrue(searchService.search(fileList, null).isEmpty());
@@ -74,7 +74,7 @@ public class SearchServiceTest {
         fileList.add(new FileEntry(new File("some_other.file")));
         fileList.add(new FileEntry(new File("some.file")));
 
-        SearchService searchService = SearchService.getInstance();
+        SearchService searchService = SearchService.getInstance(false);
 
         ArrayList<FileEntry> results = searchService.search(fileList, "some.file");
         assertEquals("some.file", results.get(0).getName());
@@ -85,7 +85,7 @@ public class SearchServiceTest {
         ArrayList<FileEntry> fileList = new ArrayList<FileEntry>();
         fileList.add(new FileEntry(new File("some.file")));
 
-        SearchService searchService = SearchService.getInstance();
+        SearchService searchService = SearchService.getInstance(false);
         assertEquals(3, searchService.getSearchPatternList().size());
 
         ArrayList<FileEntry> results = searchService.search(fileList, "some.file", 10);

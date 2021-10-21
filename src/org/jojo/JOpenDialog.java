@@ -5,16 +5,19 @@ import org.jojo.search.SearchData;
 import org.jojo.search.FileEntry;
 import java.awt.Event;
 import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
 import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.swing.JFrame;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
@@ -32,29 +35,39 @@ import org.openide.util.ContextAwareAction;
 import org.openide.util.Exceptions;
 
 public class JOpenDialog extends JDialog {
-
+    
     private JOpenDefaultListModel resultListModel = new JOpenDefaultListModel();
-    private int MAX_DISPLAY_RESULTS = 40;
+    static int MAX_DISPLAY_RESULTS = 40;
     private Frame parent = null;
 
     /** Creates new form JOpenDialog */
     public JOpenDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        
         this.parent = parent;
         initComponents();
         addCustomListeners();
         setDefaultListCellRenderer(jResultList);
         moveToCenterOfScreen();
         
+        try {
+            String mayQueryString = getMayQueryString();
+            jQueryField.setText(mayQueryString);
+            updateResultList();
+        } catch (Exception e) {
+            //log
+        }
+    }
+    
+    static String getMayQueryString()
+    {
         selectDefaultProject();
         JTextComponent editor = EditorRegistry.lastFocusedComponent();
-        
-        Console console = System.console();
-        System.out.println("Caret pos: " + editor.getCaretPosition());
-        System.out.println("Selection start: " + editor.getSelectionStart());
-        System.out.println("Selection end: " + editor.getSelectionEnd());
-       
 
+//        Console console = System.console();
+//        System.out.println("Caret pos: " + editor.getCaretPosition());
+//        System.out.println("Selection start: " + editor.getSelectionStart());
+//        System.out.println("Selection end: " + editor.getSelectionEnd());
         String selectedText = "";
         try {
             selectedText = editor.getSelectedText();
@@ -64,9 +77,8 @@ public class JOpenDialog extends JDialog {
         if (selectedText == null) {
             selectedText = "";
         }
-        
+        String mayQueryString = "";
         if (selectedText.length() == 0) {
-            String mayQueryString = "";
             int p = editor.getCaretPosition();
             String t = "";
 
@@ -92,7 +104,7 @@ public class JOpenDialog extends JDialog {
                     break;
                 }
             }
-            
+
             l = 1;
             int rpos = -1;
             while (true) {
@@ -115,37 +127,30 @@ public class JOpenDialog extends JDialog {
                     break;
                 }
             }
-            
+
             if ((lpos > 0) && (rpos >= 0) && (lpos < rpos)) {
                 try {
                     mayQueryString = editor.getText(lpos, rpos - lpos);
-                    
-                    
-                    System.out.println("lpos: " + lpos);
-                    System.out.println("rpos: " + rpos);
-                    System.out.println("mayQueryString: " + mayQueryString);
-                    
-                    
-                    jQueryField.setText(mayQueryString);
-                    updateResultList();
                 } catch (Exception e) {
-                   //log
+                    //log
                 }
-                
             }
-         
         }
-        
-               
-        if (selectedText.length() > 0) {
-            jQueryField.setText(selectedText);
-            updateResultList();
-        }
+        return mayQueryString;
+    }
+    
+    static ArrayList<FileEntry> findResult()
+    {
+        JTextComponent editor = EditorRegistry.lastFocusedComponent();
+        String query = getMayQueryString();
+        ArrayList<FileEntry> fileList = SearchData.getInstance().getFileList();
+        ArrayList<FileEntry> searchResults = SearchService.getInstance().search(fileList, query, MAX_DISPLAY_RESULTS);
+        return searchResults;
     }
     
     
     
-    private void selectDefaultProject() {
+    static void selectDefaultProject() {
         try {
             Project openProjects[] = OpenProjects.getDefault().openProjects().get();
             
@@ -368,16 +373,42 @@ private void jSelectProjectButtonActionPerformed(java.awt.event.ActionEvent evt)
         });
     }
 
+    
     private void updateResultList() {
         resultListModel.clear();
         String query = jQueryField.getText();
         ArrayList<FileEntry> fileList = SearchData.getInstance().getFileList();
+        
         ArrayList<FileEntry> searchResults = SearchService.getInstance().search(fileList, query, MAX_DISPLAY_RESULTS);
+        
         for (Iterator<FileEntry> it = searchResults.iterator(); it.hasNext();) {
             FileEntry fileEntry = it.next();
             resultListModel.addElement(fileEntry);
         }
         jResultList.setModel(resultListModel);
+        if (searchResults.size() == 1) {
+            String ap = searchResults.get(0).getAbsolutePath();
+            openFileByAbsoluteFilePath(ap);
+            this.close();
+        }
+    }
+    
+    static void openFileByAbsoluteFilePath(String absoluteFilePath)
+    {
+        try {
+            FileObject fileObject = FileUtil.toFileObject(new File(absoluteFilePath).getAbsoluteFile());
+            DataObject dataObject = DataObject.find(fileObject);
+            Node node = dataObject.getNodeDelegate();
+            javax.swing.Action action = node.getPreferredAction();
+            if (action instanceof ContextAwareAction) {
+                action = ((ContextAwareAction) action).createContextAwareInstance(node.getLookup());
+            }
+            if (action != null) {
+                action.actionPerformed(new ActionEvent(node, ActionEvent.ACTION_PERFORMED, ""));
+            }
+        } catch (Exception exception) {
+            Exceptions.printStackTrace(exception);
+        }
     }
 
     private void openSelectedFiles() {
@@ -385,16 +416,7 @@ private void jSelectProjectButtonActionPerformed(java.awt.event.ActionEvent evt)
             Object[] selectedValues = jResultList.getSelectedValues();
             for (int i = 0; i < selectedValues.length; i++) {
                 String selectedPath = ((FileEntry) selectedValues[i]).getAbsolutePath();
-                FileObject fileObject = FileUtil.toFileObject(new File(selectedPath).getAbsoluteFile());
-                DataObject dataObject = DataObject.find(fileObject);
-                Node node = dataObject.getNodeDelegate();
-                javax.swing.Action action = node.getPreferredAction();
-                if (action instanceof ContextAwareAction) {
-                    action = ((ContextAwareAction) action).createContextAwareInstance(node.getLookup());
-                }
-                if (action != null) {
-                    action.actionPerformed(new ActionEvent(node, ActionEvent.ACTION_PERFORMED, ""));
-                }
+                openFileByAbsoluteFilePath(selectedPath);
             }
             this.close();
         } catch (Exception exception) {

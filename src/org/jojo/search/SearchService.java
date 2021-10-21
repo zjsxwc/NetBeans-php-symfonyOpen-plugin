@@ -12,8 +12,8 @@ public class SearchService {
     private SearchService() {
         searchPatternList.add(new DirectorySearchPattern());
         searchPatternList.add(new SimpleSearchPattern());
-        searchPatternList.add(new RegexSearchPattern());
         searchPatternList.add(new SymfonyTwigSearchPattern());
+        searchPatternList.add(new RegexSearchPattern());
     }
 
     public static SearchService getInstance() {
@@ -44,6 +44,9 @@ public class SearchService {
 
     public ArrayList<FileEntry> search(ArrayList<FileEntry> fileList, String query, int limit) {
         ArrayList<FileEntry> result = new ArrayList<FileEntry>();
+        if (query.length() <= 0) {
+            return result;
+        }
         int actualLimit = limit;
         for (Iterator<SearchPattern> it = searchPatternList.iterator(); it.hasNext();) {
             SearchPattern searchPattern = it.next();

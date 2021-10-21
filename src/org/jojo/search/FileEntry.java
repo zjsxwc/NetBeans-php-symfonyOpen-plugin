@@ -52,7 +52,7 @@ public class FileEntry implements Comparable {
     }
 
     private String getDirectoryShortcut(String relativePath) {
-        String folders[] = relativePath.split("/");
+        String folders[] = relativePath.split(File.separator);
         String result = "";
         for (int i = 1; i < folders.length; i++) {
             if (i > 1) {

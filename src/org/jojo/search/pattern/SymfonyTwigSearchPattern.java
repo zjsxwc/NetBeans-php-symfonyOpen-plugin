@@ -140,9 +140,9 @@ public class SymfonyTwigSearchPattern extends SearchPattern {
                 camelPath += snake2Camel(exploded[i]) + suffix;
             }
             
-            System.out.println("length: " + exploded.length);
-            System.out.println("camelPath: " + camelPath);
-            System.out.println("query: " + query);
+//            System.out.println("length: " + exploded.length);
+//            System.out.println("camelPath: " + camelPath);
+//            System.out.println("query: " + query);
             isMatched = (fileEntry.getRelativePath().toLowerCase().contains(camelPath.toLowerCase()));
             if (isMatched) {
                 return true;

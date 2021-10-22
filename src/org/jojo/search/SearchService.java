@@ -7,38 +7,16 @@ import org.jojo.search.pattern.*;
 public class SearchService {
 
     private static SearchService instance = null;
-    private ArrayList<SearchPattern> searchPatternList = new ArrayList<SearchPattern>();
 
-    private SearchService(boolean onlySymfony) {
-        if (!onlySymfony) {
-            searchPatternList.add(new DirectorySearchPattern());
-            searchPatternList.add(new SimpleSearchPattern());
-            searchPatternList.add(new SymfonyTwigSearchPattern());
-            searchPatternList.add(new RegexSearchPattern());
-        } else {
-            searchPatternList.add(new DirectorySearchPattern());
-            searchPatternList.add(new SymfonyTwigSearchPattern());
-        }
+    private SearchService() {
 
     }
 
-    public static SearchService getInstance(boolean onlySymfony) {
+    public static SearchService getInstance() {
         if (instance == null) {
-            instance = new SearchService(onlySymfony);
+            instance = new SearchService();
         }
         return instance;
-    }
-
-    public void clearSearchPatternList() {
-        searchPatternList.clear();
-    }
-
-    public void addSearchPattern(SearchPattern searchPattern) {
-        searchPatternList.add(searchPattern);
-    }
-
-    public ArrayList<SearchPattern> getSearchPatternList() {
-        return searchPatternList;
     }
 
     public ArrayList<FileEntry> search(ArrayList<FileEntry> fileList, String query) {
@@ -49,6 +27,25 @@ public class SearchService {
     }
 
     public ArrayList<FileEntry> search(ArrayList<FileEntry> fileList, String query, int limit) {
+
+        ArrayList<SearchPattern> searchPatternList = new ArrayList<SearchPattern>();
+        boolean onlySymfony = false;
+        if (query.contains(":")) {
+            onlySymfony = true;
+        }
+        if (query.contains(".twig")) {
+            onlySymfony = true;
+        }
+        if (!onlySymfony) {
+            searchPatternList.add(new DirectorySearchPattern());
+            searchPatternList.add(new SimpleSearchPattern());
+            searchPatternList.add(new SymfonyTwigSearchPattern());
+            searchPatternList.add(new RegexSearchPattern());
+        } else {
+            searchPatternList.add(new DirectorySearchPattern());
+            searchPatternList.add(new SymfonyTwigSearchPattern());
+        }
+
         ArrayList<FileEntry> result = new ArrayList<FileEntry>();
         if (query.length() <= 0) {
             return result;

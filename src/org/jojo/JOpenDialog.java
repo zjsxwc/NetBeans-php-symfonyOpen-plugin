@@ -78,7 +78,7 @@ public class JOpenDialog extends JDialog {
         if (selectedText == null) {
             selectedText = "";
         }
-        String mayQueryString = "";
+        String mayQueryString = selectedText;
         if (selectedText.length() == 0) {
             int p = editor.getCaretPosition();
             String t = "";
@@ -92,11 +92,7 @@ public class JOpenDialog extends JDialog {
                     lpos = -1;
                     break;
                 }
-                if (t.indexOf("'") >= 0) {
-                    lpos = p - l + 1;
-                    break;
-                }
-                if (t.indexOf("\"") >= 0) {
+                if ( (t.indexOf("'") >= 0) || (t.indexOf("\"") >= 0) ||(t.indexOf(" ") >= 0)|| (t.indexOf("\t") >= 0)|| (t.indexOf("\n") >= 0)|| (t.indexOf("\r") >= 0)  ) {
                     lpos = p - l + 1;
                     break;
                 }
@@ -115,11 +111,7 @@ public class JOpenDialog extends JDialog {
                     rpos = -1;
                     break;
                 }
-                if (t.indexOf("'") >= 0) {
-                    rpos = p + l;
-                    break;
-                }
-                if (t.indexOf("\"") >= 0) {
+                if ((t.indexOf("'") >= 0) || (t.indexOf("\"") >= 0) || (t.indexOf(" ") >= 0) || (t.indexOf("\t") >= 0) || (t.indexOf("\n") >= 0) || (t.indexOf("\r") >= 0) ) {
                     rpos = p + l;
                     break;
                 }
@@ -144,14 +136,7 @@ public class JOpenDialog extends JDialog {
         JTextComponent editor = EditorRegistry.lastFocusedComponent();
         String query = getMayQueryString();
         ArrayList<FileEntry> fileList = SearchData.getInstance().getFileList();
-        boolean onlySymfony = false;
-        if (query.contains(":")) {
-            onlySymfony = true;
-        }
-        if (query.contains(".twig")) {
-            onlySymfony = true;
-        }
-        ArrayList<FileEntry> searchResults = SearchService.getInstance(onlySymfony).search(fileList, query, MAX_DISPLAY_RESULTS);
+        ArrayList<FileEntry> searchResults = SearchService.getInstance().search(fileList, query, MAX_DISPLAY_RESULTS);
         return searchResults;
     }
 
@@ -381,15 +366,7 @@ private void jSelectProjectButtonActionPerformed(java.awt.event.ActionEvent evt)
         resultListModel.clear();
         String query = jQueryField.getText();
         ArrayList<FileEntry> fileList = SearchData.getInstance().getFileList();
-
-        boolean onlySymfony = false;
-        if (query.contains(":")) {
-            onlySymfony = true;
-        }
-        if (query.contains(".twig")) {
-            onlySymfony = true;
-        }
-        ArrayList<FileEntry> searchResults = SearchService.getInstance(onlySymfony).search(fileList, query, MAX_DISPLAY_RESULTS);
+        ArrayList<FileEntry> searchResults = SearchService.getInstance().search(fileList, query, MAX_DISPLAY_RESULTS);
 
         for (Iterator<FileEntry> it = searchResults.iterator(); it.hasNext();) {
             FileEntry fileEntry = it.next();

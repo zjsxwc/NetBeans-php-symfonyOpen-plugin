@@ -1,6 +1,7 @@
 package org.jojo.search;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import org.jojo.search.pattern.*;
 
@@ -25,8 +26,18 @@ public class SearchService {
         }
         return search(fileList, query, fileList.size());
     }
+    
+    public HashMap<String, ArrayList<FileEntry>> searchResultCache = new HashMap<String, ArrayList<FileEntry>>();
 
     public ArrayList<FileEntry> search(ArrayList<FileEntry> fileList, String query, int limit) {
+        
+        if (searchResultCache.containsKey(query)) {
+            ArrayList<FileEntry> scr = searchResultCache.get(query);
+            if (scr == null) {
+                return new ArrayList<FileEntry>();
+            }
+            return scr;
+        }
 
         ArrayList<SearchPattern> searchPatternList = new ArrayList<SearchPattern>();
         boolean onlySymfony = false;
@@ -62,6 +73,8 @@ public class SearchService {
                 result = FileEntry.concatWithoutDuplications(result, found);
             }
         }
+        
+        searchResultCache.put(query, result);
         return result;
     }
 }
